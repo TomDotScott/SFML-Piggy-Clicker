@@ -1,5 +1,5 @@
 #include "UiManager.h"
-
+#include "../Globals.h"
 #include <fstream>
 
 #include "UiPanel.h"

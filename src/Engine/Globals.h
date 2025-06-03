@@ -40,6 +40,18 @@ private:
 	std::default_random_engine m_randomEngine;
 };
 
+constexpr float PI = 3.141592f;
+
+struct Vector2HashFunction
+{
+	size_t operator()(const sf::Vector2f& vec) const
+	{
+		const size_t xHash = std::hash<float>()(vec.x);
+		const size_t yHash = std::hash<float>()(vec.y);
+		return xHash ^ yHash;
+	}
+};
+
 extern bool OnlyWhitespace(const char* chr);
 
 #define VECTOR2F_ZERO sf::Vector2f(0.f, 0.f)
