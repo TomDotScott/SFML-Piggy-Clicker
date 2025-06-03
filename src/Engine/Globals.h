@@ -2,8 +2,11 @@
 #define GLOBALS_H
 #include <random>
 #include <SFML/System/Vector2.hpp>
+
 #define HOXML_IMPLEMENTATION
+
 #define RENDER_SPRITES 1
+
 namespace sf
 {
 	class Font;

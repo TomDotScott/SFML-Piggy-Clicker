@@ -17,26 +17,7 @@ public:
 	void Render(sf::RenderWindow& window) const;
 
 private:
-	struct Boundary
-	{
-		enum Placement
-		{
-			LEFT = 0,
-			RIGHT,
-			BOTTOM,
-			COUNT
-		};
-
-		sf::Vector2f m_TopLeft;
-		sf::Vector2f m_BottomRight;
-		sf::Vector2f m_Normal;
-		static float m_Damping;
-	};
-
-	Boundary m_boundaries[Boundary::COUNT];
-
 	Player m_player;
-	sf::RectangleShape m_playerGuideLine;
 
 #if !BUILD_MASTER
 	template<typename... Args>
