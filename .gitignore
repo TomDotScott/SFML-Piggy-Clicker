@@ -34,3 +34,4 @@
 *.sln
 *.csproj
 sharpmakeautocleanupdb_debugsolution.json
+/.vs
