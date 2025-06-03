@@ -4,6 +4,7 @@
 #include "../Globals.h"
 
 UiPanel::UiPanel() :
+	UiElement(eType::Panel),
 	m_sprite(nullptr)
 {
 	SetLayer(eLayer::MIDGROUND);

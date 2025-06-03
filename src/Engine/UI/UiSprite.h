@@ -13,6 +13,8 @@ public:
 
 	void SetScale(const sf::Vector2f& scale) const;
 
+	sf::Vector2f GetSize() const;
+
 private:
 	sf::Sprite* m_sprite;
 

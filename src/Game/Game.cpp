@@ -24,6 +24,7 @@ Game::~Game() = default;
 
 void Game::Update()
 {
+	UIMANAGER.Update();
 	m_player.Update();
 }
 

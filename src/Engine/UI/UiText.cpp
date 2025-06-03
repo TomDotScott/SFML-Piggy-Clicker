@@ -4,7 +4,7 @@
 #include "../Globals.h"
 
 UiText::UiText() :
-	UiElement(),
+	UiElement(eType::Text),
 	m_text(DEFAULT_FONT)
 {
 	// All text drawn on top

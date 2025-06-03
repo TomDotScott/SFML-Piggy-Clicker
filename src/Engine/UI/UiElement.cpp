@@ -1,8 +1,9 @@
 #include "UiElement.h"
 #include "../Globals.h"
 
-UiElement::UiElement() :
-	m_layer(eLayer::NONE)
+UiElement::UiElement(const eType type) :
+	m_layer(eLayer::NONE),
+	m_type(type)
 {
 	m_drawables.reserve(10);
 }
@@ -43,6 +44,11 @@ UiElement::eLayer UiElement::GetLayer() const
 void UiElement::SetLayer(const eLayer layer)
 {
 	m_layer = layer;
+}
+
+UiElement::eType UiElement::GetType() const
+{
+	return m_type;
 }
 
 std::string UiElement::GetName() const

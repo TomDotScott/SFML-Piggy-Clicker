@@ -2,6 +2,7 @@
 #include "../Globals.h"
 #include <fstream>
 
+#include "UiButton.h"
 #include "UiPanel.h"
 #include "UiSprite.h"
 
@@ -13,6 +14,11 @@ UiElement* UiManager::GetUiElement(const std::string& name) const
 	}
 
 	return m_uiElements.at(name);
+}
+
+UiButton* UiManager::GetUiButton(const std::string& name) const
+{
+	return static_cast<UiButton*>(GetUiElement(name));
 }
 
 UiPanel* UiManager::GetUiPanel(const std::string& name) const
@@ -119,6 +125,7 @@ bool UiManager::LoadElement(hoxml_context_t*& context, const char* xml, const si
 {
 	UiElement* currentElement = nullptr;
 
+	// TODO: See if we can make this more strongly typed! It took me a while to find this block after 4 months, it would be nice to map something to an enum automatically for this code!
 	if (strcmp("Panel", context->tag) == 0)
 	{
 		currentElement = new UiPanel();
@@ -130,6 +137,10 @@ bool UiManager::LoadElement(hoxml_context_t*& context, const char* xml, const si
 	else if (strcmp("Text", context->tag) == 0)
 	{
 		currentElement = new UiText();
+	}
+	else if (strcmp("Button", context->tag) == 0)
+	{
+		currentElement = new UiButton();
 	}
 	else
 	{
@@ -239,6 +250,20 @@ bool UiManager::LoadFont(hoxml_context_t*& context, const char* xml, const size_
 
 	return false;
 }
+
+void UiManager::Update()
+{
+	// TODO: Animation!
+	for (auto& [_, element] : m_uiElements)
+	{
+		if (element->GetType() == UiElement::eType::Button)
+		{
+			UiButton& button = *static_cast<UiButton*>(element);
+			button.HandleMouse();
+		}
+	}
+}
+
 
 void UiManager::RenderLayer(sf::RenderWindow& window, const std::set<std::string>& layerUIElementIDs) const
 {

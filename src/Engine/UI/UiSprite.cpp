@@ -3,7 +3,7 @@
 #include "../TextureManager.h"
 
 UiSprite::UiSprite() :
-	UiElement(),
+	UiElement(eType::Sprite),
 	m_sprite(nullptr),
 	m_screenScaleFactor(1.f, 1.f),
 	m_scaleFactorFromXml(1.f, 1.f)
@@ -21,6 +21,11 @@ void UiSprite::SetScale(const sf::Vector2f& scale) const
 {
 	const sf::Vector2f overallScale{ m_screenScaleFactor.x * scale.y, m_screenScaleFactor.x * scale.y };
 	m_sprite->setScale(overallScale);
+}
+
+sf::Vector2f UiSprite::GetSize() const
+{
+	return m_sprite->getGlobalBounds().size;
 }
 
 bool UiSprite::ParseEndElement(hoxml_context_t*& context)

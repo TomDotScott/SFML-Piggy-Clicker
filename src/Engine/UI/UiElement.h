@@ -7,6 +7,14 @@
 class UiElement : public GameObject
 {
 public:
+	enum class eType : std::uint8_t
+	{
+		Button,
+		Panel,
+		Sprite,
+		Text
+	};
+
 	enum class eLayer : std::int8_t
 	{
 		NONE = -1,
@@ -15,7 +23,7 @@ public:
 		FOREGROUND
 	};
 
-	UiElement();
+	UiElement(eType type);
 
 	// Exposing Load to callers and inheritors, but this will be the basis for all the UI Elements load from XML using the hoxml
 	// library. There are protected Parse functions that will be privated/protected in the children of the UiElement class.
@@ -23,6 +31,8 @@ public:
 
 	eLayer GetLayer() const;
 	void SetLayer(eLayer layer);
+
+	eType GetType() const;
 
 	std::string GetName() const;
 
@@ -45,6 +55,7 @@ protected:
 private:
 	std::string m_name;
 	eLayer m_layer;
+	eType m_type;
 	std::vector<const sf::Drawable*> m_drawables;
 };
 #endif

@@ -19,11 +19,16 @@
     <size>10</size>
     <font>DEFAULT</font>
   </Text>
-  
-  <Sprite>
-    <name>Percy</name>
+
+  <Button>
+    <name>Clicker</name>
     <position x="100" y="200"/>
-    <texture>Sprites/Percy.png</texture>
-    <layer>foreground</layer>
-  </Sprite>
+    
+    <Sprite>
+      <name>Percy</name>
+      <texture>Sprites/Percy.png</texture>
+      <position x="0" y="0"/>
+      <layer>foreground</layer>
+    </Sprite>
+  </Button>
 </ui>
