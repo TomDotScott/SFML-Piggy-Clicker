@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/build_vs2022
+*.sln
+*.csproj
+sharpmakeautocleanupdb_debugsolution.json
