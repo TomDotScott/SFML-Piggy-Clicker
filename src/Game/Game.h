@@ -2,8 +2,6 @@
 #define GAME_H
 #include <set>
 #include <SFML/Graphics/RectangleShape.hpp>
-
-#include "Fruit.h"
 #include "Player.h"
 #include "../Engine/UI/UiManager.h"
 #include "../Engine/ObjectPool.h"
@@ -37,12 +35,8 @@ private:
 
 	Boundary m_boundaries[Boundary::COUNT];
 
-	ObjectPool<Fruit, 100> m_fruit;
 	Player m_player;
 	sf::RectangleShape m_playerGuideLine;
-
-	FruitManager::eType m_currentPlayerFruitType;
-	FruitManager::eType m_nextPlayerFruitType;
 
 #if !BUILD_MASTER
 	template<typename... Args>
@@ -58,12 +52,6 @@ private:
 		}
 	}
 #endif
-
-	static void DrawFruit(const Fruit& fruit, sf::RenderWindow& window);
-
-	void HandleCollisions();
-	static bool CircleRectCollision(Fruit& fruit, const Boundary& boundary);
-	static bool CircleCircleCollision(Fruit& fruit, Fruit& otherFruit);
 };
 
 
