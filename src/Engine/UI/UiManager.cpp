@@ -2,6 +2,7 @@
 #include "../Globals.h"
 #include <fstream>
 
+#include "../Input/Mouse.h"
 #include "UiButton.h"
 #include "UiPanel.h"
 #include "UiSprite.h"
@@ -51,6 +52,14 @@ void UiManager::DrawDebugText(sf::RenderWindow& window) const
 UiManager::LastXmlDetails UiManager::GetLastXmlDetails() const
 {
 	return m_lastXmlDetails;
+}
+
+UiManager::UiManager():
+	m_lastXmlDetails()
+{
+	m_defaultUIInputs.Map(0, eInputType::Mouse, static_cast<int>(sf::Mouse::Button::Left));
+
+	m_defaultUIInputs.OnButtonPressed(0, [this] { OnLeftClickPressed(); });
 }
 
 UiManager& UiManager::Get()
@@ -253,15 +262,9 @@ bool UiManager::LoadFont(hoxml_context_t*& context, const char* xml, const size_
 
 void UiManager::Update()
 {
+	m_defaultUIInputs.Update();
+
 	// TODO: Animation!
-	for (auto& [_, element] : m_uiElements)
-	{
-		if (element->GetType() == UiElement::eType::Button)
-		{
-			UiButton& button = *static_cast<UiButton*>(element);
-			button.HandleMouse();
-		}
-	}
 }
 
 
@@ -276,6 +279,31 @@ void UiManager::RenderLayer(sf::RenderWindow& window, const std::set<std::string
 		}
 	}
 #endif
+}
+
+void UiManager::OnLeftClickPressed()
+{
+	for (const auto& [elementName, element] : m_uiElements)
+	{
+		if (element->GetType() != UiElement::eType::Button)
+		{
+			continue;
+		}
+
+		auto& button = static_cast<UiButton&>(*element);
+
+		const sf::Vector2f mousePosition = static_cast<sf::Vector2f>(Mouse::Get().GetPosition());
+		const sf::Vector2f topLeft = button.GetPosition();
+		const sf::Vector2f bottomRight = button.GetBottomRight();
+
+		const bool inWidth = mousePosition.x >= topLeft.x && mousePosition.x <= bottomRight.x;
+		const bool inHeight = mousePosition.y >= topLeft.y && mousePosition.y <= bottomRight.y;
+
+		if (inWidth && inHeight)
+		{
+			button.OnLeftClickPressed();
+		}
+	}
 }
 
 void UiManager::RenderForeground(sf::RenderWindow& window) const

@@ -20,7 +20,7 @@ public:
 private:
 	Player m_player;
 
-	Event<int, bool, std::string> m_testEvent;
+	void OnPiggyClicked();
 
 #if !BUILD_MASTER
 	template<typename... Args>

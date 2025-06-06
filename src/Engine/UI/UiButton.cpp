@@ -20,27 +20,19 @@ void UiButton::SetPosition(const sf::Vector2f& position)
 	m_sprite->SetPosition(position);
 }
 
-void UiButton::HandleMouse() const
+void UiButton::OnButtonPressed(const std::function<void()>& callback)
 {
-	const Mouse& mouse = Mouse::Get();
+	m_pressedEvent.On(callback);
+}
 
-	if (!mouse.IsButtonPressed(sf::Mouse::Button::Left))
-	{
-		return;
-	}
+void UiButton::OnLeftClickPressed()
+{
+	m_pressedEvent.Fire();
+}
 
-	const sf::Vector2f mousePosition = static_cast<sf::Vector2f>(mouse.GetPosition());
-
-	const sf::Vector2f bottomRight = m_position + m_sprite->GetSize();
-
-	const bool inWidth = mousePosition.x >= m_position.x && mousePosition.x <= bottomRight.x;
-	const bool inHeight = mousePosition.y >= m_position.y && mousePosition.y <= bottomRight.y;
-
-	if (inWidth && inHeight)
-	{
-		printf("CLICKED\n");
-	}
-
+sf::Vector2f UiButton::GetBottomRight() const
+{
+	return GetPosition() + m_sprite->GetSize();
 }
 
 bool UiButton::ParseBeginElement(hoxml_context_t*& context)

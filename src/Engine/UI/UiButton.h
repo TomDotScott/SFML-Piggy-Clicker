@@ -2,6 +2,7 @@
 #define UI_BUTTON_H
 #include "UiElement.h"
 #include "UiSprite.h"
+#include "../Event.h"
 
 class UiButton : public UiElement
 {
@@ -10,13 +11,17 @@ public:
 
 	void SetPosition(const sf::Vector2f& position) override;
 
-	// TODO: This SUCKS! Make a proper event system and make the UI be event driven
-	// Buttons can subscribe to left click events, and have a list of callbacks to call if they have been clicked
-	// This will do for now to get things up and running!
-	void HandleMouse() const;
+	void OnButtonPressed(const std::function<void()>& callback);
+
+	// TODO: I don't like this being public. I think it should be private with the UIManager as a friend class
+	void OnLeftClickPressed();
+
+	sf::Vector2f GetBottomRight() const;
 
 private:
 	UiSprite* m_sprite;
+
+	Event<> m_pressedEvent;
 
 	bool ParseBeginElement(hoxml_context_t*& context) override;
 	bool ParseEndElement(hoxml_context_t*& context) override;

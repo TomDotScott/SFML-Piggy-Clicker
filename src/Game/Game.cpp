@@ -10,17 +10,6 @@
 #include "../Libs/hoxml.h"
 
 
-static void On(int x, bool y, std::string s) {
-	printf("ON: %d, %s, %s\n", x, y ? "TRUE" : "FALSE", s.c_str());
-}
-
-static void Once(int x, bool y, std::string s) {
-	printf("ONCE: %d, %s, %s\n", x, y ? "TRUE" : "FALSE", s.c_str());
-}
-
-static size_t onID = 0;
-
-
 Game::Game() :
 	m_player()
 {
@@ -32,9 +21,8 @@ Game::Game() :
 		}
 	);
 
-	onID = m_testEvent.On(On);
 
-	m_testEvent.Once(Once);
+	static_cast<UiButton*>(UIMANAGER.GetUiElement("Clicker"))->OnButtonPressed([this] { OnPiggyClicked(); });
 }
 
 Game::~Game() = default;
@@ -43,16 +31,6 @@ void Game::Update()
 {
 	UIMANAGER.Update();
 	m_player.Update();
-
-	if (Keyboard::Get().IsButtonPressed(sf::Keyboard::Key::Space))
-	{
-		m_testEvent.Fire(69, true, "YOUR_MUM");
-	}
-
-	if (Keyboard::Get().IsButtonPressed(sf::Keyboard::Key::Backspace))
-	{
-		m_testEvent.Off(onID);
-	}
 }
 
 void Game::Render(sf::RenderWindow& window) const
@@ -70,4 +48,9 @@ void Game::Render(sf::RenderWindow& window) const
 	DrawText(window, VECTOR2F_ZERO, 30, "%.1fFPS", Timer::Get().Fps());
 	DrawText(window, VECTOR2F_ZERO + sf::Vector2f{ 0.f, 100.f }, 10, "Active Fruit: %llu", 69);
 #endif
+}
+
+void Game::OnPiggyClicked()
+{
+	printf("You clicked me with the event! Imagine the points went up by one\n");
 }

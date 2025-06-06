@@ -8,34 +8,67 @@ InputMapper::GameAction::GameAction() :
 {
 }
 
+void InputMapper::GameAction::OnButtonDown(std::function<void()> callback)
+{
+	m_events.m_onHeld.On(callback);
+}
+
+void InputMapper::GameAction::OnButtonPressed(std::function<void()> callback)
+{
+	m_events.m_onPressed.On(callback);
+}
+
+void InputMapper::GameAction::OnButtonReleased(std::function<void()> callback)
+{
+	m_events.m_onReleased.On(callback);
+}
+
 InputMapper::InputMapper() = default;
 
 void InputMapper::Update()
 {
-	auto updateInputValue = [](InputValue& inputValue) {
+	auto updateInputValue = [&](InputValue& inputValue)
+	{
 		inputValue.m_previousValue = inputValue.m_value;
 
 		switch (inputValue.GetType())
 		{
 		case eInputType::Keyboard:
-			inputValue.m_value = Keyboard::Get().IsButtonDown(static_cast<sf::Keyboard::Key>(inputValue.GetButton())) ? 0xFF : 0x00;
+			inputValue.m_value = Keyboard::Get().IsButtonDown(static_cast<sf::Keyboard::Key>(inputValue.GetButton()))
+				                     ? 0xFF
+				                     : 0x00;
 			break;
 		case eInputType::Mouse:
-			inputValue.m_value = Mouse::Get().IsButtonDown(static_cast<sf::Mouse::Button>(inputValue.GetButton())) ? 0xFF : 0x00;
+			inputValue.m_value = Mouse::Get().IsButtonDown(static_cast<sf::Mouse::Button>(inputValue.GetButton()))
+				                     ? 0xFF
+				                     : 0x00;
 			break;
 		case eInputType::Controller:
 			// TODO: Maybe xInput? The sfml joystick class looks a bit shite
 			break;
 		case eInputType::NONE:
-		default:;
+		default: ;
 			break;
 		}
-		};
+	};
 
-	for (auto& [ID, inputValue] : m_inputs)
+	for (auto& [ID, gameAction] : m_inputs)
 	{
-		updateInputValue(inputValue.PrimaryInput);
-		updateInputValue(inputValue.SecondaryInput);
+		updateInputValue(gameAction.PrimaryInput);
+		updateInputValue(gameAction.SecondaryInput);
+
+		if (IsButtonPressed(ID))
+		{
+			gameAction.m_events.m_onPressed.Fire();
+		}
+		if (IsButtonDown(ID))
+		{
+			gameAction.m_events.m_onHeld.Fire();
+		}
+		if (IsButtonReleased(ID))
+		{
+			gameAction.m_events.m_onReleased.Fire();
+		}
 	}
 }
 
@@ -88,3 +121,19 @@ bool InputMapper::IsButtonReleased(const int inputID) const
 
 	return primaryReleased || secondaryReleased;
 }
+
+void InputMapper::OnButtonDown(const int inputID, const std::function<void()>& callback)
+{
+	m_inputs.at(inputID).m_events.m_onHeld.On(callback);
+}
+
+void InputMapper::OnButtonPressed(const int inputID, const std::function<void()>& callback)
+{
+	m_inputs.at(inputID).m_events.m_onPressed.On(callback);
+}
+
+void InputMapper::OnButtonReleased(const int inputID, const std::function<void()>& callback)
+{
+	m_inputs.at(inputID).m_events.m_onReleased.On(callback);
+}
+

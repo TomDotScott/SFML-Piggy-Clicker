@@ -9,6 +9,7 @@
 #include "UiPanel.h"
 #include "UiText.h"
 #include "../../Libs/hoxml.h"
+#include "../Input/InputMapper.h"
 
 class UiManager
 {
@@ -45,7 +46,7 @@ public:
 	LastXmlDetails GetLastXmlDetails() const;
 
 private:
-	UiManager() = default;
+	UiManager();
 
 	std::unordered_map<std::string, sf::Font*> m_fonts;
 
@@ -56,9 +57,13 @@ private:
 
 	LastXmlDetails m_lastXmlDetails;
 
+	InputMapper m_defaultUIInputs;
+
 	bool LoadElement(hoxml_context_t*& context, const char* xml, size_t xmlLength);
 	bool LoadFont(hoxml_context_t*& context, const char* xml, size_t xmlLength);
 	void RenderLayer(sf::RenderWindow& window, const std::set<std::string>& layerUIElementIDs) const;
+
+	void OnLeftClickPressed();
 };
 
 #define UIMANAGER UiManager::Get()
