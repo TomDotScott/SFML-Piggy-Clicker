@@ -11,7 +11,8 @@
 
 
 Game::Game() :
-	m_player()
+	m_player(),
+	m_score(0)
 {
 	UIMANAGER.Load("ui.xml");
 
@@ -46,11 +47,11 @@ void Game::Render(sf::RenderWindow& window) const
 
 #if !BUILD_MASTER
 	DrawText(window, VECTOR2F_ZERO, 30, "%.1fFPS", Timer::Get().Fps());
-	DrawText(window, VECTOR2F_ZERO + sf::Vector2f{ 0.f, 100.f }, 10, "Active Fruit: %llu", 69);
+	DrawText(window, VECTOR2F_ZERO + sf::Vector2f{ 0.f, 100.f }, 50, "Piggies: %llu", m_score);
 #endif
 }
 
 void Game::OnPiggyClicked()
 {
-	printf("You clicked me with the event! Imagine the points went up by one\n");
+	m_score++;
 }

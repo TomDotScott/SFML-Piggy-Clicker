@@ -20,6 +20,8 @@ public:
 private:
 	Player m_player;
 
+	uint64_t m_score;
+
 	void OnPiggyClicked();
 
 #if !BUILD_MASTER
