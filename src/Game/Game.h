@@ -3,6 +3,7 @@
 #include <set>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include "Player.h"
+#include "../Engine/Event.h"
 #include "../Engine/UI/UiManager.h"
 #include "../Engine/ObjectPool.h"
 
@@ -18,6 +19,8 @@ public:
 
 private:
 	Player m_player;
+
+	Event<int, bool, std::string> m_testEvent;
 
 #if !BUILD_MASTER
 	template<typename... Args>
