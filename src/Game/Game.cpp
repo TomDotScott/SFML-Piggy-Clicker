@@ -12,7 +12,7 @@
 
 Game::Game() :
 	m_player(),
-	m_score(0)
+	m_piggyCount(0)
 {
 	UIMANAGER.Load("ui.xml");
 
@@ -23,7 +23,9 @@ Game::Game() :
 	);
 
 
-	static_cast<UiButton*>(UIMANAGER.GetUiElement("Clicker"))->OnButtonPressed([this] { OnPiggyClicked(); });
+	UIMANAGER.GetUiButton("Clicker")->OnButtonPressed([this] { OnPiggyClicked(); });
+	SetPiggiesText();
+	SetPiggiesPerSecondText(0.f);
 }
 
 Game::~Game() = default;
@@ -47,11 +49,26 @@ void Game::Render(sf::RenderWindow& window) const
 
 #if !BUILD_MASTER
 	DrawText(window, VECTOR2F_ZERO, 30, "%.1fFPS", Timer::Get().Fps());
-	DrawText(window, VECTOR2F_ZERO + sf::Vector2f{ 0.f, 100.f }, 50, "Piggies: %llu", m_score);
 #endif
 }
 
 void Game::OnPiggyClicked()
 {
-	m_score++;
+	IncrementCounter();
+}
+
+void Game::SetPiggiesText() const
+{
+	UIMANAGER.GetUiPanel("PIGGIES_PANEL")->GetUiText("PIGGY_COUNT")->SetText("%llu Piggies", m_piggyCount);
+}
+
+void Game::SetPiggiesPerSecondText(const float pps)
+{
+	UIMANAGER.GetUiPanel("PIGGIES_PANEL")->GetUiText("PPS")->SetText("Per Second: %.2f", pps);
+}
+
+void Game::IncrementCounter()
+{
+	m_piggyCount++;
+	SetPiggiesText();
 }

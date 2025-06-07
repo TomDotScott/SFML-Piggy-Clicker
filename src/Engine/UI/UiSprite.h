@@ -13,7 +13,7 @@ public:
 
 	void SetScale(const sf::Vector2f& scale) const;
 
-	sf::Vector2f GetSize() const;
+	sf::Vector2f GetSize() const override;
 
 private:
 	sf::Sprite* m_sprite;

@@ -7,7 +7,14 @@
 class UiText final : public UiElement
 {
 public:
-	UiText();
+	enum class eAlignment : uint8_t
+	{
+		Left = 0,
+		Centre,
+		Right
+	};
+
+	UiText(UiElement* parent = nullptr);
 
 	template<typename... Args>
 	void SetText(const char* fmt, Args... args)
@@ -22,17 +29,34 @@ public:
 
 		m_string = &buffer[0];
 		m_text.setString(m_string);
+
+		// TODO: Right alignment
+		if (m_alignment == eAlignment::Centre)
+		{
+			CalculateCentredBounds();
+			m_text.setPosition(m_position);
+		}
 	}
+
+	const char* GetText() const;
 
 	void SetTextSize(unsigned size);
 
 	void SetPosition(const sf::Vector2f& position) override;
 
+	eAlignment GetAlignment() const;
+	void SetAlignment(eAlignment alignment);
+
+	sf::Vector2f GetSize() const override;
+
 private:
 	std::string m_string;
 	sf::Text m_text;
+	eAlignment m_alignment;
+	UiElement* m_parent;
+
+	void CalculateCentredBounds();
 
 	bool ParseEndElement(hoxml_context_t*& context) override;
 };
-
 #endif

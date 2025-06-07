@@ -20,9 +20,13 @@ public:
 private:
 	Player m_player;
 
-	uint64_t m_score;
+	uint64_t m_piggyCount;
 
 	void OnPiggyClicked();
+
+	void SetPiggiesText() const;
+	void SetPiggiesPerSecondText(float pps);
+	void IncrementCounter();
 
 #if !BUILD_MASTER
 	template<typename... Args>

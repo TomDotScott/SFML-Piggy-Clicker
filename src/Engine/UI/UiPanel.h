@@ -12,6 +12,9 @@ public:
 
 	void SetPosition(const sf::Vector2f& position) override;
 
+	sf::Vector2f GetSize() const override;
+	void SetSize(const sf::Vector2f& size);
+
 	UiText* GetUiText(const std::string& name);
 
 private:
@@ -25,6 +28,9 @@ private:
 
 	std::vector<OffsetText> m_text;
 
+	sf::Vector2f m_size;
+
+	bool ParseAttribute(hoxml_context_t*& context) override;
 	bool ParseBeginElement(hoxml_context_t*& context) override;
 	bool ParseEndElement(hoxml_context_t*& context) override;
 };

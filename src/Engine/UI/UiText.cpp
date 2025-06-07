@@ -3,13 +3,20 @@
 #include "UiManager.h"
 #include "../Globals.h"
 
-UiText::UiText() :
+UiText::UiText(UiElement* parent) :
 	UiElement(eType::Text),
-	m_text(DEFAULT_FONT)
+	m_text(DEFAULT_FONT),
+	m_alignment(eAlignment::Left),
+	m_parent(parent)
 {
 	// All text drawn on top
 	// TODO: Make this more sophisticated... I need to be able to support arbitrary placement of elements in the XML otherwise we are at the mercy of std::hash!
 	SetLayer(eLayer::FOREGROUND);
+}
+
+const char* UiText::GetText() const
+{
+	return m_text.getString().toAnsiString().c_str();
 }
 
 void UiText::SetTextSize(const unsigned size)
@@ -20,7 +27,50 @@ void UiText::SetTextSize(const unsigned size)
 void UiText::SetPosition(const sf::Vector2f& position)
 {
 	GameObject::SetPosition(position);
-	m_text.setPosition(position);
+
+	// TODO: Right alignment
+	if (m_alignment == eAlignment::Centre)
+	{
+		CalculateCentredBounds();
+	}
+	else
+	{
+		m_text.setPosition(position);
+	}
+}
+
+UiText::eAlignment UiText::GetAlignment() const
+{
+	return m_alignment;
+}
+
+void UiText::SetAlignment(const eAlignment alignment)
+{
+	m_alignment = alignment;
+}
+
+sf::Vector2f UiText::GetSize() const
+{
+	return m_text.getGlobalBounds().size;
+}
+
+void UiText::CalculateCentredBounds()
+{
+	const sf::FloatRect textBounds = m_text.getLocalBounds();
+	m_text.setOrigin({
+		textBounds.position.x + textBounds.size.x / 2.f,
+		textBounds.position.y + textBounds.size.y / 2.f
+		});
+
+	if (m_parent)
+	{
+		// Now get the true center of the parent rectangle
+		const sf::Vector2f rectTopLeft = m_parent->GetPosition();
+		const sf::Vector2f rectSize = m_parent->GetSize();
+		const sf::Vector2f rectCenter = rectTopLeft + rectSize / 2.f;
+
+		m_text.setPosition(rectCenter);
+	}
 }
 
 bool UiText::ParseEndElement(hoxml_context_t*& context)
@@ -80,6 +130,23 @@ bool UiText::ParseEndElement(hoxml_context_t*& context)
 	if (strcmp("size", context->tag) == 0)
 	{
 		m_text.setCharacterSize(TRANSFORMED_SCALAR(std::stol(context->content)));
+		return false;
+	}
+
+	if (strcmp("alignment", context->tag) == 0)
+	{
+		if (strcmp(context->content, "centre") == 0)
+		{
+			SetAlignment(eAlignment::Centre);
+		}
+		else if (strcmp(context->content, "left") == 0)
+		{
+			SetAlignment(eAlignment::Left);
+		}
+		else if (strcmp(context->content, "right") == 0)
+		{
+			SetAlignment(eAlignment::Right);
+		}
 		return false;
 	}
 

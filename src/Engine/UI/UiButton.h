@@ -18,6 +18,8 @@ public:
 
 	sf::Vector2f GetBottomRight() const;
 
+	sf::Vector2f GetSize() const override;
+
 private:
 	UiSprite* m_sprite;
 

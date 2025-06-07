@@ -14,12 +14,31 @@ void UiPanel::SetPosition(const sf::Vector2f& position)
 {
 	UiElement::SetPosition(position);
 
-	m_sprite->SetPosition(m_position);
+	if (m_sprite)
+	{
+		m_sprite->SetPosition(m_position);
+	}
 
 	for (const auto& [text, offset] : m_text)
 	{
-		text->SetPosition(m_position + offset);
+		sf::Vector2f anchor = m_position;
+
+		if (text->GetAlignment() == UiText::eAlignment::Centre) {
+			anchor = m_position + m_size / 2.f;
+		}
+
+		text->SetPosition(anchor + offset);
 	}
+}
+
+sf::Vector2f UiPanel::GetSize() const
+{
+	return m_size;
+}
+
+void UiPanel::SetSize(const sf::Vector2f& size)
+{
+	m_size = size;
 }
 
 UiText* UiPanel::GetUiText(const std::string& name)
@@ -34,6 +53,19 @@ UiText* UiPanel::GetUiText(const std::string& name)
 	return nullptr;
 }
 
+bool UiPanel::ParseAttribute(hoxml_context_t*& context)
+{
+	if (strcmp("size", context->tag) == 0)
+	{
+		if (!ParseVectorAttribute(context, m_size))
+		{
+			printf(" UiPanel: Error loading the size on line %u\n", context->line);
+			return true;
+		}
+	}
+	return UiElement::ParseAttribute(context);
+}
+
 bool UiPanel::ParseBeginElement(hoxml_context_t*& context)
 {
 	auto [xmlText, xmlLength] = UIMANAGER.GetLastXmlDetails();
@@ -44,14 +76,14 @@ bool UiPanel::ParseBeginElement(hoxml_context_t*& context)
 		if (!m_sprite->Load(context, xmlText, xmlLength))
 		{
 			printf(" UiPanel: Error loading sprite on line %u\n", context->line);
-			return true;
+			// return true;
 		}
 	}
 	else if (strcmp("Text", context->tag) == 0)
 	{
 		OffsetText& newText = m_text.emplace_back();
 
-		newText.m_text = new UiText();
+		newText.m_text = new UiText(this);
 
 		if (!newText.m_text->Load(context, xmlText, xmlLength))
 		{
@@ -71,9 +103,12 @@ bool UiPanel::ParseEndElement(hoxml_context_t*& context)
 	{
 		SetPosition(m_position);
 
-		for (const sf::Drawable* drawable : m_sprite->GetDrawablesList())
+		if (m_sprite)
 		{
-			AddDrawable(drawable);
+			for (const sf::Drawable* drawable : m_sprite->GetDrawablesList())
+			{
+				AddDrawable(drawable);
+			}
 		}
 
 		for (const auto& [text, offset] : m_text)

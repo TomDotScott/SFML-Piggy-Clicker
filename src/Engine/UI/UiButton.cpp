@@ -32,7 +32,12 @@ void UiButton::OnLeftClickPressed()
 
 sf::Vector2f UiButton::GetBottomRight() const
 {
-	return GetPosition() + m_sprite->GetSize();
+	return GetPosition() + GetSize();
+}
+
+sf::Vector2f UiButton::GetSize() const
+{
+	return m_sprite->GetSize();
 }
 
 bool UiButton::ParseBeginElement(hoxml_context_t*& context)
