@@ -124,11 +124,13 @@ bool CollisionPolygon::DetectCollision(const CollisionPolygon& p1, const Collisi
 	return true;
 }
 
+#if BUILD_DEBUG
 void CollisionPolygon::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
 	target.draw(m_vertices, states);
 }
+#endif
 
 
 // Main function

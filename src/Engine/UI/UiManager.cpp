@@ -1,7 +1,10 @@
 #include "UiManager.h"
 #include "../Globals.h"
 #include <fstream>
-
+#if BUILD_DEBUG
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#endif
 #include "../Input/Mouse.h"
 #include "UiButton.h"
 #include "UiPanel.h"
@@ -54,7 +57,7 @@ UiManager::LastXmlDetails UiManager::GetLastXmlDetails() const
 	return m_lastXmlDetails;
 }
 
-UiManager::UiManager():
+UiManager::UiManager() :
 	m_lastXmlDetails()
 {
 	m_defaultUIInputs.Map(0, eInputType::Mouse, static_cast<int>(sf::Mouse::Button::Left));
@@ -273,6 +276,16 @@ void UiManager::RenderLayer(sf::RenderWindow& window, const std::set<std::string
 #if RENDER_SPRITES
 	for (const auto& elementName : layerUIElementIDs)
 	{
+#if BUILD_DEBUG
+		if (m_uiElements.at(elementName)->GetType() == UiElement::eType::Panel)
+		{
+			sf::RectangleShape debugRect(m_uiElements.at(elementName)->GetSize());
+			debugRect.setPosition(m_uiElements.at(elementName)->GetPosition());
+			debugRect.setFillColor(sf::Color::Magenta);
+			window.draw(debugRect);
+		}
+#endif
+
 		for (const auto* drawable : m_uiElements.at(elementName)->GetDrawablesList())
 		{
 			window.draw(*drawable);
