@@ -81,7 +81,7 @@ bool UiPanel::ParseBeginElement(hoxml_context_t*& context)
 	}
 	else if (strcmp("Text", context->tag) == 0)
 	{
-		OffsetText& newText = m_text.emplace_back();
+		OffsetUiText& newText = m_text.emplace_back();
 
 		newText.m_text = new UiText(this);
 

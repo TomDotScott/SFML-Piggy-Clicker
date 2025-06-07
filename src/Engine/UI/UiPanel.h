@@ -20,13 +20,7 @@ public:
 private:
 	UiSprite* m_sprite;
 
-	struct OffsetText
-	{
-		UiText* m_text;
-		sf::Vector2f m_offset;
-	};
-
-	std::vector<OffsetText> m_text;
+	std::vector<OffsetUiText> m_text;
 
 	sf::Vector2f m_size;
 

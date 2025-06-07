@@ -21,8 +21,14 @@ private:
 	Player m_player;
 
 	uint64_t m_piggyCount;
+	int m_autoClickerCount;
+
+	uint64_t m_piggyCountLastTick;
+	float m_elapsedTime;
 
 	void OnPiggyClicked();
+
+	void OnAutoClickerClicked();
 
 	void SetPiggiesText() const;
 	void SetPiggiesPerSecondText(float pps);

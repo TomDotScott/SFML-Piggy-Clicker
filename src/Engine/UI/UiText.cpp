@@ -28,13 +28,32 @@ void UiText::SetPosition(const sf::Vector2f& position)
 {
 	GameObject::SetPosition(position);
 
-	// TODO: Right alignment
-	if (m_alignment == eAlignment::Centre)
+	if (m_parent)
 	{
-		CalculateCentredBounds();
+		CalculateAlignmentBounds();
 	}
 	else
 	{
+		// No parent, fallback to normal position with origin centered horizontally and vertically
+		const sf::FloatRect textBounds = m_text.getLocalBounds();
+
+		float originX;
+		switch (m_alignment)
+		{
+		case eAlignment::Left:
+			originX = textBounds.position.x;
+			break;
+		case eAlignment::Right:
+			originX = textBounds.position.x + textBounds.size.x;
+			break;
+		case eAlignment::Centre:
+		default:
+			originX = textBounds.position.x + textBounds.size.x / 2.f;
+			break;
+		}
+
+		float originY = textBounds.position.x + textBounds.size.y / 2.f;
+		m_text.setOrigin({ originX, originY });
 		m_text.setPosition(position);
 	}
 }
@@ -54,23 +73,47 @@ sf::Vector2f UiText::GetSize() const
 	return m_text.getGlobalBounds().size;
 }
 
-void UiText::CalculateCentredBounds()
+void UiText::CalculateAlignmentBounds()
 {
 	const sf::FloatRect textBounds = m_text.getLocalBounds();
-	m_text.setOrigin({
-		textBounds.position.x + textBounds.size.x / 2.f,
-		textBounds.position.y + textBounds.size.y / 2.f
-		});
-
-	if (m_parent)
+	if (!m_parent)
 	{
-		// Now get the true center of the parent rectangle
-		const sf::Vector2f rectTopLeft = m_parent->GetPosition();
-		const sf::Vector2f rectSize = m_parent->GetSize();
-		const sf::Vector2f rectCenter = rectTopLeft + rectSize / 2.f;
-
-		m_text.setPosition(rectCenter);
+		// Fallback: no parent, just use position and center origin
+		m_text.setOrigin({ textBounds.position.x + textBounds.size.x / 2.f,
+			textBounds.position.y + textBounds.size.y / 2.f });
+		return;
 	}
+
+	const sf::Vector2f parentPos = m_parent->GetPosition();
+	const sf::Vector2f parentSize = m_parent->GetSize();
+
+	float originX;
+	float posX;
+
+	switch (m_alignment)
+	{
+
+	case eAlignment::Right:
+		originX = textBounds.position.x + textBounds.size.x;
+		posX = parentPos.x + parentSize.x;
+		break;
+	case eAlignment::Centre:
+		originX = textBounds.position.x + textBounds.size.x / 2.f;
+		posX = parentPos.x + parentSize.x / 2.f;
+		break;
+	case eAlignment::Left:
+	default:
+		originX = textBounds.position.x;
+		posX = parentPos.x;
+		break;
+	}
+
+	// Vertically center always (assuming that's what you want)
+	float originY = textBounds.position.y + textBounds.size.y / 2.f;
+	float posY = parentPos.y + parentSize.y / 2.f;
+
+	m_text.setOrigin({ originX, originY });
+	m_text.setPosition({ posX, posY });
 }
 
 bool UiText::ParseEndElement(hoxml_context_t*& context)

@@ -12,7 +12,8 @@
 
 Game::Game() :
 	m_player(),
-	m_piggyCount(0)
+	m_piggyCount(0),
+	m_autoClickerCount(0)
 {
 	UIMANAGER.Load("ui.xml");
 
@@ -24,6 +25,7 @@ Game::Game() :
 
 
 	UIMANAGER.GetUiButton("Clicker")->OnButtonPressed([this] { OnPiggyClicked(); });
+	UIMANAGER.GetUiButton("AUTO_CLICKER")->OnButtonPressed([this] { OnAutoClickerClicked(); });
 	SetPiggiesText();
 	SetPiggiesPerSecondText(0.f);
 }
@@ -32,8 +34,28 @@ Game::~Game() = default;
 
 void Game::Update()
 {
+	m_elapsedTime += Timer::Get().DeltaTime();
+
 	UIMANAGER.Update();
 	m_player.Update();
+
+	if (m_elapsedTime > 1) {
+
+		for (int i = 0; i < m_autoClickerCount; ++i)
+		{
+			m_piggyCount++;
+		}
+
+		const auto piggyDelta = static_cast<float>(m_piggyCount) - static_cast<float>(m_piggyCountLastTick);
+
+		SetPiggiesPerSecondText(piggyDelta / m_elapsedTime);
+
+		m_piggyCountLastTick = m_piggyCount;
+
+		m_elapsedTime = 0.f;
+	}
+
+	SetPiggiesText();
 }
 
 void Game::Render(sf::RenderWindow& window) const
@@ -48,13 +70,26 @@ void Game::Render(sf::RenderWindow& window) const
 	UIMANAGER.RenderForeground(window);
 
 #if !BUILD_MASTER
-	DrawText(window, VECTOR2F_ZERO, 30, "%.1fFPS", Timer::Get().Fps());
+	DrawText(window, sf::Vector2f{ 0, 10 }, 30, "%.1fFPS", Timer::Get().Fps());
 #endif
 }
 
 void Game::OnPiggyClicked()
 {
 	IncrementCounter();
+}
+
+void Game::OnAutoClickerClicked()
+{
+	if (m_piggyCount < 10)
+	{
+		return;
+	}
+
+	m_piggyCount -= 10;
+	m_autoClickerCount++;
+
+	printf("Bought an auto clicker!\n");
 }
 
 void Game::SetPiggiesText() const
@@ -70,5 +105,4 @@ void Game::SetPiggiesPerSecondText(const float pps)
 void Game::IncrementCounter()
 {
 	m_piggyCount++;
-	SetPiggiesText();
 }

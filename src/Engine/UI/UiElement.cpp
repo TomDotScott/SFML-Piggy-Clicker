@@ -73,9 +73,6 @@ bool UiElement::ParseBeginElement(hoxml_context_t*& context)
 		return false;
 	}
 
-#if BUILD_DEBUG
-	printf(" UiElement: Opened <%s>\n", context->tag);
-#endif
 	return false;
 }
 

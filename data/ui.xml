@@ -60,7 +60,41 @@
       <name>Percy</name>
       <texture>Sprites/Percy.png</texture>
       <position x="0" y="0"/>
+      <scale x="0.65" y="0.65"/>
       <layer>foreground</layer>
     </Sprite>
+  </Button>
+
+  <Text>
+    <name>SHOP</name>
+    <string>SHOP:</string>
+    <alignment>left</alignment>
+    <colour>FFFFFFFF</colour>
+    <position x="1070" y="115"/>
+    <size>20</size>
+    <font>DEFAULT</font>
+  </Text>
+  
+  <Button>
+    <name>AUTO_CLICKER</name>
+    <position x="1070" y="140"/>
+
+    <Sprite>
+      <name>auto_clicker_sprite</name>
+      <texture>Sprites/Ui/auto_clicker.png</texture>
+      <position x="0" y="0"/>
+      <scale x="1.0" y="1.0"/>
+      <layer>foreground</layer>
+    </Sprite>
+
+    <Text>
+      <name>auto_clicker_price</name>
+      <string>10</string>
+      <alignment>right</alignment>
+      <colour>FFFFFFFF</colour>
+      <position x="-10" y="0"/>
+      <size>20</size>
+      <font>DEFAULT</font>
+    </Text>
   </Button>
 </ui>

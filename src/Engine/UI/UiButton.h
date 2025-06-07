@@ -2,6 +2,7 @@
 #define UI_BUTTON_H
 #include "UiElement.h"
 #include "UiSprite.h"
+#include "UiText.h"
 #include "../Event.h"
 
 class UiButton : public UiElement
@@ -21,7 +22,11 @@ public:
 	sf::Vector2f GetSize() const override;
 
 private:
+	// Required!
 	UiSprite* m_sprite;
+
+	// Optional, the m_text pointer may be null
+	OffsetUiText m_offsetText;
 
 	Event<> m_pressedEvent;
 

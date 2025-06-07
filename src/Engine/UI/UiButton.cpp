@@ -18,6 +18,12 @@ void UiButton::SetPosition(const sf::Vector2f& position)
 	UiElement::SetPosition(position);
 
 	m_sprite->SetPosition(position);
+
+	if (m_offsetText.m_text) {
+		sf::Vector2f anchor = m_position;
+
+		m_offsetText.m_text->SetPosition(anchor + m_offsetText.m_offset);
+	}
 }
 
 void UiButton::OnButtonPressed(const std::function<void()>& callback)
@@ -53,6 +59,18 @@ bool UiButton::ParseBeginElement(hoxml_context_t*& context)
 			return true;
 		}
 	}
+	if (strcmp("Text", context->tag) == 0)
+	{
+		m_offsetText.m_text = new UiText(this);
+
+		if (!m_offsetText.m_text->Load(context, xmlText, xmlLength))
+		{
+			printf(" UiPanel: Error loading Text on line %u\n", context->line);
+			return true;
+		}
+
+		m_offsetText.m_offset = m_offsetText.m_text->GetPosition();
+	}
 
 	return UiElement::ParseBeginElement(context);
 }
@@ -71,12 +89,21 @@ bool UiButton::ParseEndElement(hoxml_context_t*& context)
 			printf(" Closing tag found and no sprite was assigned to %s!\n", GetName().c_str());
 			return false;
 		}
-		m_sprite->SetPosition(m_position);
 
 		for (const sf::Drawable* const drawable : m_sprite->GetDrawablesList())
 		{
 			AddDrawable(drawable);
 		}
+
+		if (m_offsetText.m_text)
+		{
+			for (const sf::Drawable* const drawable : m_offsetText.m_text->GetDrawablesList())
+			{
+				AddDrawable(drawable);
+			}
+		}
+
+		SetPosition(m_position);
 
 		// When we have finished assigning the sprite, we can return true!
 		return true;

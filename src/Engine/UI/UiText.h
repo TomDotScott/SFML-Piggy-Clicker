@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include "UiElement.h"
+#include "../Globals.h"
 
 class UiText final : public UiElement
 {
@@ -33,7 +34,7 @@ public:
 		// TODO: Right alignment
 		if (m_alignment == eAlignment::Centre)
 		{
-			CalculateCentredBounds();
+			CalculateAlignmentBounds();
 			m_text.setPosition(m_position);
 		}
 	}
@@ -55,8 +56,15 @@ private:
 	eAlignment m_alignment;
 	UiElement* m_parent;
 
-	void CalculateCentredBounds();
+	void CalculateAlignmentBounds();
 
 	bool ParseEndElement(hoxml_context_t*& context) override;
+};
+
+// TODO: This could probably be an extension of the UiText class!
+struct OffsetUiText
+{
+	UiText* m_text = nullptr;
+	sf::Vector2f m_offset = VECTOR2F_ZERO;
 };
 #endif
