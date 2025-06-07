@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 #else
 		sf::VideoMode::getDesktopMode(),
 #endif
-		"Suika Game Clone",
+		"PIGGY Clicker",
 #if BUILD_DEBUG
 		sf::State::Windowed
 #else
