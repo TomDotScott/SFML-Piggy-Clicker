@@ -11,23 +11,16 @@
 
 
 Game::Game() :
-	m_player(),
+	m_upgradeManager(),
 	m_piggyCount(0),
-	m_autoClickerCount(0)
+	m_elapsedTime(0.f)
 {
 	UIMANAGER.Load("ui.xml");
-
-	m_player.SetPosition({
-			static_cast<float>(GRAPHIC_SETTINGS.GetScreenDetails().m_ScreenCentre.x),
-			0
-		}
-	);
-
 
 	UIMANAGER.GetUiButton("Clicker")->OnButtonPressed([this] { OnPiggyClicked(); });
 	UIMANAGER.GetUiButton("AUTO_CLICKER")->OnButtonPressed([this] { OnAutoClickerClicked(); });
 	SetPiggiesText();
-	SetPiggiesPerSecondText(0.f);
+	SetPiggiesPerSecondText();
 }
 
 Game::~Game() = default;
@@ -37,20 +30,12 @@ void Game::Update()
 	m_elapsedTime += Timer::Get().DeltaTime();
 
 	UIMANAGER.Update();
-	m_player.Update();
 
-	if (m_elapsedTime > 1) {
+	if (m_elapsedTime > 1)
+	{
+		m_piggyCount += m_upgradeManager.GetTotalPPS();
 
-		for (int i = 0; i < m_autoClickerCount; ++i)
-		{
-			m_piggyCount++;
-		}
-
-		const auto piggyDelta = static_cast<float>(m_piggyCount) - static_cast<float>(m_piggyCountLastTick);
-
-		SetPiggiesPerSecondText(piggyDelta / m_elapsedTime);
-
-		m_piggyCountLastTick = m_piggyCount;
+		SetPiggiesPerSecondText();
 
 		m_elapsedTime = 0.f;
 	}
@@ -81,13 +66,16 @@ void Game::OnPiggyClicked()
 
 void Game::OnAutoClickerClicked()
 {
-	if (m_piggyCount < 10)
+	if (!m_upgradeManager.CanAfford(eUpgradeType::AutoClicker, m_piggyCount))
 	{
 		return;
 	}
 
-	m_piggyCount -= 10;
-	m_autoClickerCount++;
+	m_upgradeManager.BuyUpgrade(eUpgradeType::AutoClicker, m_piggyCount);
+
+	UIMANAGER.GetUiButton("AUTO_CLICKER")->GetText()->SetText("%d", m_upgradeManager.GetUpgradePrice(eUpgradeType::AutoClicker));
+
+	SetPiggiesPerSecondText();
 
 	printf("Bought an auto clicker!\n");
 }
@@ -97,9 +85,9 @@ void Game::SetPiggiesText() const
 	UIMANAGER.GetUiPanel("PIGGIES_PANEL")->GetUiText("PIGGY_COUNT")->SetText("%llu Piggies", m_piggyCount);
 }
 
-void Game::SetPiggiesPerSecondText(const float pps)
+void Game::SetPiggiesPerSecondText() const
 {
-	UIMANAGER.GetUiPanel("PIGGIES_PANEL")->GetUiText("PPS")->SetText("Per Second: %.2f", pps);
+	UIMANAGER.GetUiPanel("PIGGIES_PANEL")->GetUiText("PPS")->SetText("Per Second: %.2f", m_upgradeManager.GetTotalPPS());
 }
 
 void Game::IncrementCounter()

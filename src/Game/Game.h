@@ -3,6 +3,7 @@
 #include <set>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include "Player.h"
+#include "UpgradeManager.h"
 #include "../Engine/Event.h"
 #include "../Engine/UI/UiManager.h"
 #include "../Engine/ObjectPool.h"
@@ -18,12 +19,10 @@ public:
 	void Render(sf::RenderWindow& window) const;
 
 private:
-	Player m_player;
+	UpgradeManager m_upgradeManager;
 
 	uint64_t m_piggyCount;
-	int m_autoClickerCount;
 
-	uint64_t m_piggyCountLastTick;
 	float m_elapsedTime;
 
 	void OnPiggyClicked();
@@ -31,7 +30,7 @@ private:
 	void OnAutoClickerClicked();
 
 	void SetPiggiesText() const;
-	void SetPiggiesPerSecondText(float pps);
+	void SetPiggiesPerSecondText() const;
 	void IncrementCounter();
 
 #if !BUILD_MASTER

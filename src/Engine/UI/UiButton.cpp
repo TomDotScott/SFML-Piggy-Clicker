@@ -46,6 +46,11 @@ sf::Vector2f UiButton::GetSize() const
 	return m_sprite->GetSize();
 }
 
+UiText* UiButton::GetText() const
+{
+	return m_offsetText.m_text;
+}
+
 bool UiButton::ParseBeginElement(hoxml_context_t*& context)
 {
 	auto [xmlText, xmlLength] = UIMANAGER.GetLastXmlDetails();

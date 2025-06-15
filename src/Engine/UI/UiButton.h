@@ -21,6 +21,8 @@ public:
 
 	sf::Vector2f GetSize() const override;
 
+	UiText* GetText() const;
+
 private:
 	// Required!
 	UiSprite* m_sprite;
